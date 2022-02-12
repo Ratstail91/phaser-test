@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 
 //phaser
 import PhaserWrapper from '../phaser/wrapper';
-import HelloWorld from '../phaser/scenes/hello-world';
 import Room from '../phaser/scenes/room';
 
 //phaser config
@@ -25,7 +24,6 @@ const App = props => {
 		}
 
 		//load all scenes TODO: make dynamic
-		game.scene.add('hello-world', HelloWorld);
 		game.scene.add('room', Room);
 
 		//start first scene
