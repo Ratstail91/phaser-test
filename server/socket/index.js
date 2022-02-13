@@ -7,8 +7,12 @@ const {
 	getDestination,
 	setPosition,
 	setVelocity,
-	setDestination
+	setDestination,
+	calcPositions,
 } = require('../ECS/entity');
+
+//kickoff
+calcPositions();
 
 //main function for socket.io
 module.exports = io => {
@@ -34,7 +38,7 @@ const connection = io => async socket => {
 	//create the entity and send it out
 	socket.entity = makeEntity();
 
-	//send this info to other players
+	//send this info to all players
 	io.emit('player make', {
 		entity: socket.entity,
 		position: getPosition(socket.entity),
@@ -46,6 +50,10 @@ const connection = io => async socket => {
 	const socks = await io.fetchSockets();
 
 	socks.forEach(sock => {
+		if (socket.entity == sock.entity) {
+			return; //ignore self
+		}
+
 		socket.emit('player make', {
 			entity: sock.entity,
 			position: getPosition(sock.entity),
@@ -77,11 +85,9 @@ const calcVelocity = entity => {
 	const pos = getPosition(entity);
 	const dst = getDestination(entity);
 
-	const disx = dst.x - pos.x;
-	const disy = dst.y - pos.y;
+	const delay = 0.001;
+	const distance = { x: dst.x - pos.x, y: dst.y - pos.y };
+	const velocity = { x: distance.x * delay, y: distance.y * delay };
 
-	const speed = 100;
-
-
-	return { x: disx, y: disy };
+	return velocity;
 };

@@ -60,6 +60,8 @@ export default class Room extends Phaser.Scene {
 
 		//load the assets
 		this.load.image('player', 'img/red.png');
+
+		this.simTime = (new Date()).getTime();
 	}
 
 	create() {
@@ -78,20 +80,29 @@ export default class Room extends Phaser.Scene {
 	update() {
 		//move entities
 		players.forEach(player => {
-			// if (Math.abs(player.position.x - player.destination.x) < Math.abs(player.velocity.x)) {
-			// 	//stop moving in X direction
-			// 	player.position.x = player.destination.x;
-			// 	player.velocity.x = 0;
-			// }
+			if (Math.abs(player.position.x - player.destination.x) < Math.abs(player.velocity.x)) {
+				//stop moving in X direction
+				player.position.x = player.destination.x;
+				player.velocity.x = 0;
+			}
 
-			// if (Math.abs(player.position.y - player.destination.y) < Math.abs(player.velocity.y)) {
-			// 	//stop moving in Y direction
-			// 	player.position.y = player.destination.y;
-			// 	player.velocity.y = 0;
-			// }
+			if (Math.abs(player.position.y - player.destination.y) < Math.abs(player.velocity.y)) {
+				//stop moving in Y direction
+				player.position.y = player.destination.y;
+				player.velocity.y = 0;
+			}
+
+			//calculate delta time
+			const d = new Date();
+			let delta = 0;
+			if (this.simTime < d.getTime()) {
+				delta = d.getTime() - this.simTime;
+				this.simTime += delta;
+			}
 
 			//actually move
-			player.position += player.velocity;
+			player.position.x += player.velocity.x * delta;
+			player.position.y += player.velocity.y * delta;
 			updateSprite(player.entity);
 		});
 	}
